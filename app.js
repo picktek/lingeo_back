@@ -54,7 +54,7 @@ app.post('/login', (req, res, next) => {
   req.login(user, err => {
     if (err) { return next(err); }
 
-    res.status(200);
+    res.sendStatus(200);
   });
 });
 
