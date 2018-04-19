@@ -63,8 +63,18 @@ app.get('/login', (req, res) => {
   }
 });
 
+const loggedIn = (req, res, next) => {
+  if (req.user || req.isAuthenticated()) {
+    next();
+  } else {
+    res.status(401).json({
+      error: 'no_login'
+    });
+  }
+};
+
 app.use('/', indexRouter);
-app.use('/lingeo', require('connect-ensure-login').ensureLoggedIn(), lingeoRouter);
+app.use('/lingeo', loggedIn, lingeoRouter);
 app.use('/migration', migrationRouter);
 
 // catch 404 and forward to error handler
