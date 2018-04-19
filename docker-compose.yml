@@ -1,0 +1,21 @@
+version: "3.2"
+
+services:
+  lingeo_back:
+      container_name: lingeo_back
+      image: node:carbon-alpine
+      restart: always
+      working_dir: /opt/app
+      environment:
+        - PORT=4019
+      ports:
+        - 4019:4019
+      volumes:
+        - ./:/opt/app
+        - /opt/app/node_modules
+      networks:
+        - lingeo
+      command: /opt/app/bin/docker_start.sh
+
+networks:
+  lingeo:
