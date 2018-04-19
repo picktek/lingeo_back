@@ -18,20 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const passport      = require('passport'),
-      session       = require('express-session'),
-      LocalStrategy = require('passport-local').Strategy,
-      users         = require('./config/users');
-
-passport.use(new LocalStrategy(
-  function (username, password, done) {
-    if (users.hasOwnProperty(username) && users[username].password === password) {
-      return done(null, users[username]);
-    }
-
-    return done(null, false, { message: 'Incorrect username or password.' });
-  }
-));
+const passport = require('passport'),
+      session  = require('express-session'),
+      users    = require('./config/users');
 
 passport.serializeUser((user, done) => {
   done(null, user.username);
@@ -62,12 +51,10 @@ app.post('/login', (req, res, next) => {
     return next('Incorrect username or password.');
   }
 
-  req.login(user, function (err) {
+  req.login(user, err => {
     if (err) { return next(err); }
 
-    res.status(401).json({
-      error: 'no_login'
-    });
+    res.status(200);
   });
 });
 
