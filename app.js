@@ -3,6 +3,7 @@ const express      = require('express');
 const path         = require('path');
 const cookieParser = require('cookie-parser');
 const logger       = require('morgan');
+const bCrypt       = require('bcrypt-nodejs');
 const app          = express();
 
 const indexRouter     = require('./routes/index');
@@ -45,7 +46,7 @@ app.post('/login', (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (users.hasOwnProperty(username) && users[username].password === password) {
+  if (users.hasOwnProperty(username) && bCrypt.compareSync(password, users[username].password)) {
     user = users[username];
   } else {
     return next('Incorrect username or password.');
