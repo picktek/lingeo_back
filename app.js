@@ -18,14 +18,53 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
+const passport      = require('passport'),
+      session       = require('express-session'),
+      LocalStrategy = require('passport-local').Strategy,
+      users         = require('./config/users');
+
+passport.use(new LocalStrategy(
+  function (username, password, done) {
+    if (users.hasOwnProperty(username) && users[username].password === password) {
+      return done(null, users[username]);
+    }
+
+    return done(null, false, { message: 'Incorrect username or password.' });
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.username);
+});
+
+passport.deserializeUser((username, done) => {
+  done(null, users[username]);
+});
+
+app.use(session({
+  secret:            'c8vot|Sq~H9%7iyQD$gqBvirxS-34j)s8+AL5eRSBZ)so3uW,LnbCQNHeVs`f35i',
+  resave:            false,
+  saveUninitialized: true,
+  cookie:            { secure: false }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.post('/login', passport.authenticate('local'));
+app.get('/login', (req, res) => {
+  if (req.user || req.isAuthenticated()) {
+    res.json({
+      login: 'success'
+    });
+  } else {
+    res.status(401).json({
+      error: 'no_login'
+    });
+  }
 });
 
 app.use('/', indexRouter);
-app.use('/lingeo', lingeoRouter);
+app.use('/lingeo', require('connect-ensure-login').ensureLoggedIn(), lingeoRouter);
 app.use('/migration', migrationRouter);
 
 // catch 404 and forward to error handler
