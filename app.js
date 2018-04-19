@@ -50,7 +50,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post('/login', passport.authenticate('local'));
+app.post('/login', (req, res, next) => {
+  req.login(req.body.username, function (err) {
+    if (err) { return next(err); }
+
+    res.status(401).json({
+      error: 'no_login'
+    });
+  });
+});
+
 app.get('/login', (req, res) => {
   if (req.user || req.isAuthenticated()) {
     res.json({
