@@ -155,7 +155,7 @@ router.post('/:id', (req, res) => {
     /** usage of function callback is critical here to obtain this.lastID **/
     db.run('INSERT INTO `geo`(`geo`, `type`) VALUES(?, ?)', [gadaikvaneUkan(geo.geo), geo.type_id], function (err) {
       if (err) {
-        console.log(err);
+        console.log('insertGeo', err);
         return;
       }
 
@@ -203,7 +203,7 @@ router.post('/:id', (req, res) => {
     });
   } else if (eng_id === -1 && _.isEmpty(req.body.geos) === false) {
     /** usage of function callback is critical here to obtain this.lastID **/
-    db.run('INSERT INTO `eng`(`eng`, `type`, `transcription`) VALUES(?, ?, ?)', [req.body.eng, req.body.eng_type, req.body.transcription], function (err) {
+    db.run('INSERT INTO `eng`(`eng`, `type`, `transcription`) VALUES(?, ?, ?)', [req.body.eng, _.defaultTo(req.body.eng_type, 1), _.defaultTo(req.body.transcription, '')], function (err) {
       if (err) {
         console.log('eng_insert_error', err);
         res.sendStatus(404);
