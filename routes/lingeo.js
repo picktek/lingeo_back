@@ -214,10 +214,10 @@ router.post('/:id', (req, res) => {
       }
       const eng_id = this.lastID;
       _.forEach(req.body.geos, geo => {
-        insertGeo(eng_id, geo, () => {
-          res.json({ new_eng_id: eng_id });
-        });
+        insertGeo(eng_id, geo);
       });
+      
+      res.json({ new_eng_id: eng_id });
     });
   } else {
     console.log('not implemented', req.body);
