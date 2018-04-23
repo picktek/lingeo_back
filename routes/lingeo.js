@@ -168,6 +168,7 @@ router.post('/:id', (req, res) => {
     wordINFO(eng_id, dbData => {
       if (req.body.eng !== dbData.eng || req.body.transcription !== dbData.transcription || req.body.eng_type !== dbData.eng_type) {
         db.run('UPDATE `eng` SET `eng` = ?, `transcription` = ?, `type` = ? WHERE `id` = ?', [req.body.eng, req.body.transcription, req.body.eng_type, eng_id]);
+        res.sendStatus(202);
       } else {
         _.forEach(req.body.geos, geo => {
           _.forEach(dbData.geos, dbGeo => {
@@ -198,6 +199,8 @@ router.post('/:id', (req, res) => {
               }
             });
           });
+        } else {
+          res.sendStatus(202);
         }
       }
     });
@@ -216,6 +219,9 @@ router.post('/:id', (req, res) => {
         });
       });
     });
+  } else {
+    console.log('not implemented', req.body);
+    res.sendStatus(400);
   }
 });
 
